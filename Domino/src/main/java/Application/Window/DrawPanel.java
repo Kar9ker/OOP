@@ -25,12 +25,16 @@ public class DrawPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 switch (e.getButton()) {
                     case 1 :
-                        Dice dice = new Dice(0, 0, e.getX(), e.getY());
+                        Dice dice = new Dice(0, 0, e.getX(), e.getY(), true);
                         diceList.add(dice);
                         repaint();
                         break;
-                    case 2 :
-                        if (diceList.size() > 0) diceList.remove(diceList.size() - 1);
+                    case 3 :
+                        int size = diceList.size();
+                        if (size > 0) {
+                            Dice tmp = diceList.get(size - 1);
+                            tmp.setVertical(!tmp.isVertical());
+                        }
                         repaint();
                         break;
                 }

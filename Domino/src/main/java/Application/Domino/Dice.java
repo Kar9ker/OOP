@@ -4,27 +4,31 @@ import java.awt.*;
 
 public class Dice {
     private final int HEIGHT = 100;
-    private final  int WIDTH = 200;
+    private final int WIDTH = 50;
     private int firstValue;
     private int secondValue;
     private int x;
     private int y;
+    private DiceDirection direction;
 
-    public Dice(int firstValue, int secondValue, int x, int y) {
+
+    public Dice(int firstValue, int secondValue, int x, int y, DiceDirection direction) {
         this.firstValue = firstValue;
         this.secondValue = secondValue;
         this.x = x;
         this.y = y;
+        this.direction = direction;
     }
 
     public void draw(Graphics gr) {
         Graphics2D g = (Graphics2D) gr;
 
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(x,y ,WIDTH, HEIGHT);
+        g.fillRect(x, y, WIDTH, HEIGHT);
 
         g.setColor(Color.BLACK);
         g.drawRect(x, y, WIDTH, HEIGHT);
+
     }
 
     public int getFirstValue() {
@@ -43,7 +47,7 @@ public class Dice {
         this.secondValue = secondValue;
     }
 
-    public float getX() {
+    public int getX() {
         return x;
     }
 
@@ -51,11 +55,19 @@ public class Dice {
         this.x = x;
     }
 
-    public float getY() {
+    public int getY() {
         return y;
     }
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public DiceDirection getDirection() {
+        return direction;
+    }
+
+    public void setDirection(DiceDirection direction) {
+        this.direction = direction;
     }
 }
