@@ -25,7 +25,7 @@ public class DrawPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 switch (e.getButton()) {
                     case 1 :
-                        Dice dice = new Dice(1, 0, e.getX(), e.getY(), 0);
+                        Dice dice = new Dice(1, 2, e.getX(), e.getY(), 0);
                         diceList.add(dice);
                         repaint();
                         break;

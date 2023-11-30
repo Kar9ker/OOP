@@ -13,13 +13,15 @@ public class Dice {
     private class Rect {
         public int x, y;
         public int diameter, value;
+        boolean isVertical;
         public final int POINT_RADIUS = 5;
 
-        public Rect(int x, int y, int diameter, int value) {
+        public Rect(int x, int y, int diameter, int value, boolean isVertical) {
             this.x = x;
             this.y = y;
             this.diameter = diameter;
             this.value = value;
+            this.isVertical = isVertical;
         }
         public void draw(Graphics gr) {
             Graphics2D g = (Graphics2D) gr;
@@ -35,6 +37,20 @@ public class Dice {
                     g.fillOval(x + diameter/2 - POINT_RADIUS, y + diameter/2 - POINT_RADIUS,
                             2*POINT_RADIUS, 2*POINT_RADIUS);
                     break;
+                case 2:
+                    g.setColor(Color.RED);
+                    if (isVertical) {
+                        g.fillOval(x + diameter / 4 - POINT_RADIUS, y + diameter / 2 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + diameter / 2 + diameter / 4 - POINT_RADIUS, y + diameter / 2 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    }else {
+                        g.fillOval(x + diameter / 2 - POINT_RADIUS, y + diameter / 4 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + diameter / 2 - POINT_RADIUS, y + diameter / 2 + diameter/4 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    }
+                    break;
             }
         }
     }
@@ -45,8 +61,8 @@ public class Dice {
         this.x = x;
         this.y = y;
         this.direction = direction;
-        firstRect = new Rect(0,0, DIAMETER, firstValue);
-        secondRect = new Rect(0,0, DIAMETER, secondValue);
+        firstRect = new Rect(0,0, DIAMETER, firstValue, true);
+        secondRect = new Rect(0,0, DIAMETER, secondValue, true);
     }
 
 
@@ -61,6 +77,9 @@ public class Dice {
 
                 secondRect.x = x;
                 secondRect.y = y + DIAMETER;
+
+                firstRect.isVertical = true;
+                secondRect.isVertical = true;
                 break;
             case 1:
                 secondRect.x = x;
@@ -68,6 +87,9 @@ public class Dice {
 
                 firstRect.x = x + DIAMETER;
                 firstRect.y = y;
+
+                firstRect.isVertical = false;
+                secondRect.isVertical = false;
                 break;
             case 2:
                 secondRect.x = x;
@@ -75,6 +97,9 @@ public class Dice {
 
                 firstRect.x = x;
                 firstRect.y = y + DIAMETER;
+
+                firstRect.isVertical = true;
+                secondRect.isVertical = true;
                 break;
             case 3:
                 firstRect.x = x;
@@ -82,6 +107,9 @@ public class Dice {
 
                 secondRect.x = x + DIAMETER;
                 secondRect.y = y;
+
+                firstRect.isVertical = false;
+                secondRect.isVertical = false;
                 break;
         }
         firstRect.draw(gr);
