@@ -1,5 +1,7 @@
 package Application.Domino;
 
+import Application.Direction;
+
 import java.awt.*;
 
 public class Dice {
@@ -8,7 +10,7 @@ public class Dice {
     private int secondValue;
     private int x, y;
     Rect firstRect, secondRect;
-    private int direction; // 0 - up, 1 - right, 2 - down, 3 - left
+    private Direction direction;
 
     private class Rect {
         public int x, y;
@@ -23,6 +25,7 @@ public class Dice {
             this.value = value;
             this.isVertical = isVertical;
         }
+
         public void draw(Graphics gr) {
             Graphics2D g = (Graphics2D) gr;
             g.setColor(Color.LIGHT_GRAY);
@@ -34,8 +37,8 @@ public class Dice {
                     break;
                 case 1:
                     g.setColor(Color.RED);
-                    g.fillOval(x + diameter/2 - POINT_RADIUS, y + diameter/2 - POINT_RADIUS,
-                            2*POINT_RADIUS, 2*POINT_RADIUS);
+                    g.fillOval(x + diameter / 2 - POINT_RADIUS, y + diameter / 2 - POINT_RADIUS,
+                            2 * POINT_RADIUS, 2 * POINT_RADIUS);
                     break;
                 case 2:
                     g.setColor(Color.RED);
@@ -44,10 +47,82 @@ public class Dice {
                                 2 * POINT_RADIUS, 2 * POINT_RADIUS);
                         g.fillOval(x + diameter / 2 + diameter / 4 - POINT_RADIUS, y + diameter / 2 - POINT_RADIUS,
                                 2 * POINT_RADIUS, 2 * POINT_RADIUS);
-                    }else {
+                    } else {
                         g.fillOval(x + diameter / 2 - POINT_RADIUS, y + diameter / 4 - POINT_RADIUS,
                                 2 * POINT_RADIUS, 2 * POINT_RADIUS);
-                        g.fillOval(x + diameter / 2 - POINT_RADIUS, y + diameter / 2 + diameter/4 - POINT_RADIUS,
+                        g.fillOval(x + diameter / 2 - POINT_RADIUS, y + diameter / 2 + diameter / 4 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    }
+                    break;
+                case 3:
+                    g.setColor(Color.RED);
+                    if (isVertical) {
+                        g.fillOval(x + diameter / 2 - POINT_RADIUS, y + diameter / 2 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + diameter / 5 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    } else {
+                        g.fillOval(x + diameter / 2 - POINT_RADIUS, y + diameter / 2 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + diameter / 5 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    }
+                    break;
+                case 4 :
+                    g.setColor(Color.RED);
+                    g.fillOval(x + diameter / 5 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                            2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                            2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    g.fillOval(x + diameter / 5 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
+                            2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
+                            2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    break;
+                case 5 :
+                    g.setColor(Color.RED);
+                    g.fillOval(x + diameter / 2 - POINT_RADIUS, y + diameter / 2 - POINT_RADIUS,
+                            2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    g.fillOval(x + diameter / 5 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                            2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                            2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    g.fillOval(x + diameter / 5 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
+                            2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
+                            2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    break;
+                case 6 :
+                    g.setColor(Color.RED);
+                    if (isVertical) {
+                        g.fillOval(x + diameter / 5 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + diameter / 5 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + diameter / 5 - POINT_RADIUS, y + diameter / 2 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + diameter / 2 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                    } else {
+                        g.fillOval(x + diameter / 5 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + diameter / 2 - POINT_RADIUS, y + diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + diameter / 5 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + 4 * diameter / 5 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
+                                2 * POINT_RADIUS, 2 * POINT_RADIUS);
+                        g.fillOval(x + diameter / 2 - POINT_RADIUS, y + 4 * diameter / 5 - POINT_RADIUS,
                                 2 * POINT_RADIUS, 2 * POINT_RADIUS);
                     }
                     break;
@@ -55,23 +130,22 @@ public class Dice {
         }
     }
 
-    public Dice(int firstValue, int secondValue, int x, int y, int direction) {
+    public Dice(int firstValue, int secondValue, int x, int y, Direction direction) {
         this.firstValue = firstValue;
         this.secondValue = secondValue;
         this.x = x;
         this.y = y;
         this.direction = direction;
-        firstRect = new Rect(0,0, DIAMETER, firstValue, true);
-        secondRect = new Rect(0,0, DIAMETER, secondValue, true);
+        firstRect = new Rect(0, 0, DIAMETER, firstValue, true);
+        secondRect = new Rect(0, 0, DIAMETER, secondValue, true);
     }
 
 
     //Доделать класс квадрата
 
     public void draw(Graphics gr) {
-        // 0 - up, 1 - right, 2 - down, 3 - left
         switch (direction) {
-            case 0:
+            case UP:
                 firstRect.x = x;
                 firstRect.y = y;
 
@@ -81,7 +155,7 @@ public class Dice {
                 firstRect.isVertical = true;
                 secondRect.isVertical = true;
                 break;
-            case 1:
+            case RIGHT:
                 secondRect.x = x;
                 secondRect.y = y;
 
@@ -91,7 +165,7 @@ public class Dice {
                 firstRect.isVertical = false;
                 secondRect.isVertical = false;
                 break;
-            case 2:
+            case DOWN:
                 secondRect.x = x;
                 secondRect.y = y;
 
@@ -101,7 +175,7 @@ public class Dice {
                 firstRect.isVertical = true;
                 secondRect.isVertical = true;
                 break;
-            case 3:
+            case LEFT:
                 firstRect.x = x;
                 firstRect.y = y;
 
@@ -148,11 +222,11 @@ public class Dice {
         this.y = y;
     }
 
-    public int getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(int direction) {
+    public void setDirection(Direction direction) {
         this.direction = direction;
     }
 }

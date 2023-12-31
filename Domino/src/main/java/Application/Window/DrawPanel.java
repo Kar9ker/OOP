@@ -1,5 +1,6 @@
 package Application.Window;
 
+import Application.Direction;
 import Application.Domino.Dice;
 
 import javax.swing.*;
@@ -25,7 +26,7 @@ public class DrawPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 switch (e.getButton()) {
                     case 1 :
-                        Dice dice = new Dice(1, 2, e.getX(), e.getY(), 0);
+                        Dice dice = new Dice(5, 6, e.getX(), e.getY(), Direction.UP);
                         diceList.add(dice);
                         repaint();
                         break;
@@ -33,11 +34,7 @@ public class DrawPanel extends JPanel {
                         int size = diceList.size();
                         if (size > 0) {
                             Dice tmp = diceList.get(size - 1);
-                            if (tmp.getDirection() > 3) {
-                                tmp.setDirection(0);
-                            }else {
-                                tmp.setDirection(tmp.getDirection() + 1);
-                            }
+                            tmp.setDirection(Direction.getNext(tmp.getDirection()));
                         }
                         repaint();
                         break;
