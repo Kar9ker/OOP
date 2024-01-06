@@ -5,7 +5,7 @@ import Application.Direction;
 import java.awt.*;
 
 public class Dice {
-    private final int DIAMETER = 50;
+    private final int SMALL_RECT_DIAMETER = 50;
     private int firstValue;
     private int secondValue;
     private int x, y;
@@ -16,7 +16,7 @@ public class Dice {
         public int x, y;
         public int diameter, value;
         boolean isVertical;
-        public final int POINT_RADIUS = 5;
+        public final int POINT_RADIUS = SMALL_RECT_DIAMETER / 10;
 
         public Rect(int x, int y, int diameter, int value, boolean isVertical) {
             this.x = x;
@@ -136,8 +136,8 @@ public class Dice {
         this.x = x;
         this.y = y;
         this.direction = direction;
-        firstRect = new Rect(0, 0, DIAMETER, firstValue, true);
-        secondRect = new Rect(0, 0, DIAMETER, secondValue, true);
+        firstRect = new Rect(0, 0, SMALL_RECT_DIAMETER, firstValue, true);
+        secondRect = new Rect(0, 0, SMALL_RECT_DIAMETER, secondValue, true);
     }
 
 
@@ -150,7 +150,7 @@ public class Dice {
                 firstRect.y = y;
 
                 secondRect.x = x;
-                secondRect.y = y + DIAMETER;
+                secondRect.y = y + SMALL_RECT_DIAMETER;
 
                 firstRect.isVertical = true;
                 secondRect.isVertical = true;
@@ -159,7 +159,7 @@ public class Dice {
                 secondRect.x = x;
                 secondRect.y = y;
 
-                firstRect.x = x + DIAMETER;
+                firstRect.x = x + SMALL_RECT_DIAMETER;
                 firstRect.y = y;
 
                 firstRect.isVertical = false;
@@ -170,7 +170,7 @@ public class Dice {
                 secondRect.y = y;
 
                 firstRect.x = x;
-                firstRect.y = y + DIAMETER;
+                firstRect.y = y + SMALL_RECT_DIAMETER;
 
                 firstRect.isVertical = true;
                 secondRect.isVertical = true;
@@ -179,7 +179,7 @@ public class Dice {
                 firstRect.x = x;
                 firstRect.y = y;
 
-                secondRect.x = x + DIAMETER;
+                secondRect.x = x + SMALL_RECT_DIAMETER;
                 secondRect.y = y;
 
                 firstRect.isVertical = false;
