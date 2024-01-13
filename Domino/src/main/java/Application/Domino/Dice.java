@@ -229,4 +229,8 @@ public class Dice {
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
+    @Override
+    public String toString() {
+        return "{ " + firstValue + ", " + secondValue + " }";
+    }
 }

@@ -18,6 +18,7 @@ public class DrawPanel extends JPanel {
     private Timer timer;
     private int ticksFromStart = 0;
     private List<Dice> diceList;
+    private List<Dice> playersHand;
 
     public DrawPanel(final int width, final int height, final int timerDelay) {
         this.PANEL_WIDTH = width;
@@ -26,8 +27,10 @@ public class DrawPanel extends JPanel {
         //общая колода
         diceList = getFilledDices();
         //начальная раздача
-        List<Dice> playersHand = getRandDices(diceList, 5);
-        diceList = playersHand;
+        playersHand = getRandDices(diceList, 5);
+        printList(diceList);
+        System.out.println();
+        printList(playersHand);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -48,6 +51,7 @@ public class DrawPanel extends JPanel {
                 }
             }
         });
+
     }
 
     @Override
@@ -90,32 +94,29 @@ public class DrawPanel extends JPanel {
         return false;
     }
 
-    private List<Dice> getRandDices(final List<Dice> list, int count) {
-        List<Dice> newList = new ArrayList<>(list);
+    private List<Dice> getRandDices(List<Dice> list, int count) {
         List<Dice> finalList = new ArrayList<>(count);
         Random rnd = new Random();
         for (int i = 0; i < count; i++) {
-            int num = rnd.nextInt(0, newList.size());
-            finalList.add(newList.get(num));
-            newList.remove(num);
+            int num = rnd.nextInt(0, list.size());
+            finalList.add(list.get(num));
+            list.remove(num);
         }
         return finalList;
     }
-    private void someTest() {
-        List<Integer> list1 = new ArrayList<>();
-        List<Integer> list2;
-        list1.add(10);
-        list1.add(6);
-        list1.add(98);
-        list2 = list1;
-        list2.remove(0);
-        for (Integer i : list1) {
-            System.out.print(i + " ");
+    private int getHighestDiceIndex(List<Dice> list) {
+        int index = 0;
+        int maxSum = 0;
+        for (Dice d : list) {
+            int currSum = d.getFirstValue() + d.getSecondValue();
+            maxSum = Math.max(currSum, maxSum);
+            index++;
         }
-        System.out.println();
-        for (Integer i : list2) {
-            System.out.print(i + " ");
+        return index;
+    }
+    private <T> void printList(List<T> list) {
+        for (T l : list) {
+            System.out.print(l.toString() + " ");
         }
-        System.out.println();
     }
 }
