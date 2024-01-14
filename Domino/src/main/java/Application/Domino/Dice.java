@@ -5,7 +5,7 @@ import Application.Direction;
 import java.awt.*;
 
 public class Dice {
-    private final int SMALL_RECT_DIAMETER = 50;
+    private final static int SMALL_RECT_DIAMETER = 50;
     private int firstValue;
     private int secondValue;
     private int x, y;
@@ -232,5 +232,8 @@ public class Dice {
     @Override
     public String toString() {
         return "{ " + firstValue + ", " + secondValue + " }";
+    }
+    public static int getSMALL_RECT_DIAMETER() {
+        return SMALL_RECT_DIAMETER;
     }
 }

@@ -28,9 +28,6 @@ public class DrawPanel extends JPanel {
         diceList = getFilledDices();
         //начальная раздача
         playersHand = getRandDices(diceList, 5);
-        printList(diceList);
-        System.out.println();
-        printList(playersHand);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -104,15 +101,37 @@ public class DrawPanel extends JPanel {
         }
         return finalList;
     }
+    //Получить индекс кости с наибольшей суммой очков из списка
     private int getHighestDiceIndex(List<Dice> list) {
         int index = 0;
         int maxSum = 0;
         for (Dice d : list) {
             int currSum = d.getFirstValue() + d.getSecondValue();
             maxSum = Math.max(currSum, maxSum);
+        }
+        for (Dice d : list) {
+            int currSum = d.getFirstValue() + d.getSecondValue();
+            if (currSum == maxSum) {
+                return index;
+            }
             index++;
         }
         return index;
+    }
+    //Выставить руку игрока внизу экрана
+    private void orderPlayersDices() {
+        int x0 = PANEL_WIDTH / 2 - Dice.getSMALL_RECT_DIAMETER();
+        int prekol = 0;
+        boolean sign = true;
+        for (Dice dice : playersHand) {
+            dice.setX(x0 + prekol);
+            if (sign) {
+                prekol = Math.abs(prekol) + 2 * Dice.getSMALL_RECT_DIAMETER();
+            } else {
+                prekol *= -1;
+            }
+            sign = !sign;
+        }
     }
     private <T> void printList(List<T> list) {
         for (T l : list) {
