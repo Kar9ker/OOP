@@ -1,4 +1,4 @@
-package Application;
+package Application.Domino;
 
 public enum Direction {
     UP,

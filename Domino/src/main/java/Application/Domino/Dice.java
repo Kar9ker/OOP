@@ -1,16 +1,27 @@
 package Application.Domino;
 
-import Application.Direction;
-
+import javax.swing.*;
 import java.awt.*;
 
-public class Dice {
+public class Dice extends JComponent implements Comparable<Dice>{
     private final static int SMALL_RECT_DIAMETER = 50;
     private int firstValue;
     private int secondValue;
     private int x, y;
     Rect firstRect, secondRect;
     private Direction direction;
+
+    @Override //Compare by sum
+    public int compareTo(Dice o) {
+        int mainSum = firstValue + secondValue;
+        int comparedSum = o.firstValue + o.secondValue;
+        if (mainSum > comparedSum) {
+            return 1;
+        } else if (mainSum < comparedSum){
+            return -1;
+        }
+        return 0;
+    }
 
     private class Rect {
         public int x, y;

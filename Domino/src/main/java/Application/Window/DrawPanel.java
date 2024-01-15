@@ -1,13 +1,12 @@
 package Application.Window;
 
-import Application.Direction;
+import Application.Domino.Direction;
 import Application.Domino.Dice;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -28,19 +27,20 @@ public class DrawPanel extends JPanel {
         diceList = getFilledDices();
         //начальная раздача
         playersHand = getRandDices(diceList, 5);
+        orderPlayersDices();
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 switch (e.getButton()) {
                     case 1 :
                         Dice dice = new Dice(5, 6, e.getX(), e.getY(), Direction.UP);
-                        diceList.add(dice);
+                        playersHand.add(dice);
                         repaint();
                         break;
                     case 3 :
-                        int size = diceList.size();
+                        int size = playersHand.size();
                         if (size > 0) {
-                            Dice tmp = diceList.get(size - 1);
+                            Dice tmp = playersHand.get(size - 1);
                             tmp.setDirection(Direction.getNext(tmp.getDirection()));
                         }
                         repaint();
@@ -56,7 +56,7 @@ public class DrawPanel extends JPanel {
         super.paint(gr);
         gr.setColor(Color.WHITE);
         gr.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
-        for (Dice d : diceList) {
+        for (Dice d : playersHand) {
             d.draw(gr);
         }
     }
@@ -124,6 +124,7 @@ public class DrawPanel extends JPanel {
         int prekol = 0;
         boolean sign = true;
         for (Dice dice : playersHand) {
+            dice.setY(PANEL_HEIGHT - Dice.getSMALL_RECT_DIAMETER() * 2 - 50);
             dice.setX(x0 + prekol);
             if (sign) {
                 prekol = Math.abs(prekol) + 2 * Dice.getSMALL_RECT_DIAMETER();

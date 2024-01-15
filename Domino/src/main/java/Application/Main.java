@@ -10,6 +10,8 @@ public class Main {
 //        someTest();
     }
     private static void someTest() {
-        System.out.println(9 / 2);
+        Integer i = 5;
+        Integer j = 4;
+        System.out.println(i.compareTo(j));
     }
 }
