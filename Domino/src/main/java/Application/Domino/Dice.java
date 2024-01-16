@@ -247,4 +247,10 @@ public class Dice extends JComponent implements Comparable<Dice>{
     public static int getSMALL_RECT_DIAMETER() {
         return SMALL_RECT_DIAMETER;
     }
+    public static Dice copyOf(Dice dice) {
+        return new Dice(dice.getFirstValue(), dice.getSecondValue(), dice.getX(), dice.getY(), dice.getDirection());
+    }
+    public boolean isV1sameAsV2() {
+        return firstValue == secondValue;
+    }
 }

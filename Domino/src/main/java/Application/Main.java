@@ -1,5 +1,7 @@
 package Application;
 
+import Application.Domino.Dice;
+import Application.Domino.Direction;
 import Application.Domino.Game;
 import Application.Window.MainWindow;
 import java.util.ArrayList;
@@ -11,7 +13,6 @@ public class Main {
 //        someTest();
     }
     private static void someTest() {
-        Game game = new Game(200, 200);
-        game.start();
+
     }
 }
