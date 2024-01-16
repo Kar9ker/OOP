@@ -17,9 +17,38 @@ public class Game {
         this.AIHand = getRandDices(diceList, 5);
         this.state = GameState.NOT_STARTED;
     }
+    private void fillSomeDiceList() {
+        playersHand = new ArrayList<>();
+        playersHand.add(new Dice(3, 6, 0, 0, Direction.UP));
+        playersHand.add(new Dice(4, 5, 0, 0, Direction.UP));
+        playersHand.add(new Dice(1, 3, 0, 0, Direction.UP));
+        playersHand.add(new Dice(2, 2, 0, 0, Direction.UP));
+        playersHand.add(new Dice(2, 5, 0, 0, Direction.UP));
+
+        AIHand = new ArrayList<>();
+        AIHand.add(new Dice(2, 4, 0, 0, Direction.UP));
+        AIHand.add(new Dice(4, 4, 0, 0, Direction.UP));
+        AIHand.add(new Dice(3, 5, 0, 0, Direction.UP));
+        AIHand.add(new Dice(0, 2, 0, 0, Direction.UP));
+        AIHand.add(new Dice(0, 5, 0, 0, Direction.UP));
+    }
     public void start() {
-        state = GameState.PLAYING;
         // Определение первого хода
+        state = getFirstTurn();
+
+    }
+    private void playing() {
+        switch (state) {
+            case PLAYERS_TURN -> {
+                Dice chosenDice = choseDice(getChosenDiceIndex());
+                putDice(chosenDice);
+            }
+            case AI_TURN -> {
+                System.out.println();
+            }
+        }
+    }
+    private void putDice(Dice dice) {
 
     }
     private int getHighestDiceIndex(List<Dice> list) {
@@ -55,16 +84,40 @@ public class Game {
         return index;
     }
     private GameState getFirstTurn() {
+        // Проверка на 1:1 или меньшую одинаковую пару или меньшую кость
+        List<Dice> sameValuesDicesPlayer = new ArrayList<>();
         for (Dice dice : playersHand) {
             if (dice.getFirstValue() == 1 && dice.getSecondValue() == 1) {
                 return GameState.PLAYERS_TURN;
             }
+            if (dice.getFirstValue() == dice.getSecondValue()) {
+                sameValuesDicesPlayer.add(dice);
+            }
         }
+        List<Dice> sameValuesDicesAI = new ArrayList<>();
         for (Dice dice : AIHand) {
             if (dice.getFirstValue() == 1 && dice.getSecondValue() == 1) {
                 return GameState.AI_TURN;
             }
+            if (dice.getFirstValue() == dice.getSecondValue()) {
+                sameValuesDicesAI.add(dice);
+            }
         }
+        //Поиск наименьшей пары
+        if (sameValuesDicesPlayer.size() > 0 && sameValuesDicesAI.size() == 0) {
+            return GameState.PLAYERS_TURN;
+        }else if (sameValuesDicesPlayer.size() == 0 && sameValuesDicesAI.size() > 0) {
+            return GameState.AI_TURN;
+        }else if (sameValuesDicesPlayer.size() > 0 && sameValuesDicesAI.size() > 0) {
+            Dice sameValuePlayer = sameValuesDicesPlayer.get(getLowestDiceIndex(sameValuesDicesPlayer));
+            Dice sameValueAI = sameValuesDicesAI.get(getLowestDiceIndex(sameValuesDicesAI));
+            if (sameValuePlayer.compareTo(sameValueAI) > 0) {
+                return GameState.AI_TURN;
+            }else {
+                return GameState.PLAYERS_TURN;
+            }
+        }
+        //Поиск наименьшего значения
         Dice playersDice = playersHand.get(getLowestDiceIndex(playersHand));
         Dice AIDice = AIHand.get(getLowestDiceIndex(AIHand));
         if (playersDice.compareTo(AIDice) > 0) {
@@ -72,6 +125,9 @@ public class Game {
         }else if (playersDice.compareTo(AIDice) < 0) {
             return GameState.AI_TURN;
         }
+        return getRandTurnState();
+    }
+    private GameState getRandTurnState() {
         Random random = new Random();
         int chose = random.nextInt(0, 2);
         if (chose > 0) {
@@ -79,9 +135,6 @@ public class Game {
         }else {
             return GameState.AI_TURN;
         }
-    }
-    private void putDice(Dice dice) {
-
     }
     private List<Dice> getFilledDices() {
         List<Dice> list = new ArrayList<>();
@@ -121,5 +174,10 @@ public class Game {
             list.remove(num);
         }
         return finalList;
+    }
+    private <T> void printList(List<T> list) {
+        for (T l : list) {
+            System.out.print(l.toString() + " ");
+        }
     }
 }
