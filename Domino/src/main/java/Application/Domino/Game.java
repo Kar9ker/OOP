@@ -5,16 +5,23 @@ import java.util.List;
 import java.util.Random;
 
 public class Game {
+    private final int ROUNDS = 3;
+    private final int STARTER_COUNT_OF_DICES = 5;
+    private final int SCREEN_WIDTH;
+    private final int SCREEN_HEIGHT;
     private List<Dice> table;
     private List<Dice> diceList;
     private List<Dice> playersHand;
     private List<Dice> AIHand;
     private GameState state;
+    private int leftValue;
+    private int rightValue;
+    private int chosenDiceIndex; //For player
+    private Direction locationOfChosenDice; // Добавить кость слева или справа
 
-    public Game() {
-        this.diceList = getFilledDices();
-        this.playersHand = getRandDices(diceList, 5);
-        this.AIHand = getRandDices(diceList, 5);
+    public Game(int SCREEN_HEIGHT, int SCREEN_WIDTH) {
+        this.SCREEN_HEIGHT = SCREEN_HEIGHT;
+        this.SCREEN_WIDTH = SCREEN_WIDTH;
         this.state = GameState.NOT_STARTED;
     }
     private void fillSomeDiceList() {
@@ -33,20 +40,108 @@ public class Game {
         AIHand.add(new Dice(0, 5, 0, 0, Direction.UP));
     }
     public void start() {
-        // Определение первого хода
-        state = getFirstTurn();
-
+        int round = 0;
+        while (round < ROUNDS && state != GameState.FINISHED) {
+            //Для определения первого хода игрока
+            leftValue = 7;
+            //Начальная раздача
+            diceList = getFilledDices();
+            playersHand = getRandDices(diceList, STARTER_COUNT_OF_DICES);
+            AIHand = getRandDices(diceList, STARTER_COUNT_OF_DICES);
+            table = new ArrayList<>();
+            chosenDiceIndex = -1;
+            // Определение первого хода
+            state = getFirstTurn();
+            //Ход раунда
+            playing();
+            round++;
+        }
     }
     private void playing() {
+        int leftX = 0, leftY = 0;
+        int rightX = 0, rightY = 0;
+        if (isRoundOver()) {
+            return;
+        }
         switch (state) {
             case PLAYERS_TURN -> {
-                Dice chosenDice = choseDice(getChosenDiceIndex());
-                putDice(chosenDice);
+                while (chosenDiceIndex < 0) {
+                    //Waiting for player
+                    System.out.println("Ваш ход");
+                }
+                //Если первый ход
+                if (leftValue > 6) {
+                    Dice chosenDice = playersHand.get(chosenDiceIndex);
+                    playersHand.remove(chosenDiceIndex);
+
+                    if (chosenDice.getFirstValue() == chosenDice.getSecondValue()) {
+                        chosenDice.setX(SCREEN_WIDTH / 2 - Dice.getSMALL_RECT_DIAMETER() / 2);
+                        chosenDice.setY(SCREEN_HEIGHT / 2 - Dice.getSMALL_RECT_DIAMETER());
+                        chosenDice.setDirection(Direction.UP);
+                        leftY = chosenDice.getY() + Dice.getSMALL_RECT_DIAMETER() / 2;
+                        leftX = chosenDice.getX() - 2 * Dice.getSMALL_RECT_DIAMETER();
+                        rightY = leftY;
+                        rightX =chosenDice.getX() + Dice.getSMALL_RECT_DIAMETER();
+                    }else {
+                        chosenDice.setX(SCREEN_WIDTH / 2 - Dice.getSMALL_RECT_DIAMETER());
+                        chosenDice.setY(SCREEN_HEIGHT / 2 - Dice.getSMALL_RECT_DIAMETER() / 2);
+                        chosenDice.setDirection(Direction.LEFT);
+                        leftY = chosenDice.getY();
+                        leftX = chosenDice.getX() - Dice.getSMALL_RECT_DIAMETER() * 2;
+                        rightY = chosenDice.getY();
+                        rightX = chosenDice.getX() + Dice.getSMALL_RECT_DIAMETER();
+                    }
+                    table.add(chosenDice);
+                    leftValue = chosenDice.getFirstValue();
+                    rightValue = chosenDice.getSecondValue();
+                }else {
+                    //Не первый ход
+                    Dice chosenDice = playersHand.get(chosenDiceIndex);
+                    playersHand.remove(chosenDiceIndex);
+
+                    switch (locationOfChosenDice) {
+                        case LEFT -> {
+                            if (chosenDice.getFirstValue() == chosenDice.getSecondValue()) {
+                                chosenDice.setY(SCREEN_HEIGHT / 2 - Dice.getSMALL_RECT_DIAMETER());
+                            }else {
+                                chosenDice.setX(leftX);
+                                chosenDice.setY(leftY);
+                                leftX -= 2 * Dice.getSMALL_RECT_DIAMETER();
+                            }
+                        }
+                        case RIGHT -> {
+
+                        }
+                    }
+                }
+
+
+                //Конец хода
+                chosenDiceIndex = -1;
+                state = GameState.nextTurn(GameState.PLAYERS_TURN);
             }
             case AI_TURN -> {
                 System.out.println();
             }
         }
+    }
+    //Есть ли возможность у игроков продолжить
+    private boolean isRoundOver() {
+        if (playersHand.size() == 0 || AIHand.size() == 0) {
+            return true;
+        }
+        return !isTurnPossible(playersHand) && !isTurnPossible(AIHand);
+    }
+    private boolean isTurnPossible(List<Dice> list) {
+        for (Dice dice : list) {
+            int firstValue = dice.getFirstValue();
+            int secondValue = dice.getSecondValue();
+            if (firstValue == leftValue || firstValue == rightValue
+            || secondValue == leftValue || secondValue == rightValue) {
+                return true;
+            }
+        }
+        return false;
     }
     private void putDice(Dice dice) {
 
@@ -179,5 +274,11 @@ public class Game {
         for (T l : list) {
             System.out.print(l.toString() + " ");
         }
+    }
+    public void setChosenDiceIndex(int chosenDiceIndex) {
+        this.chosenDiceIndex = chosenDiceIndex;
+    }
+    public void setLocationOfChosenDice(Direction locationOfChosenDice) {
+        this.locationOfChosenDice = locationOfChosenDice;
     }
 }

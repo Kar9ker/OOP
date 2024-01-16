@@ -7,4 +7,11 @@ public enum GameState {
     PLAYING,
     PAUSE,
     FINISHED;
+    public static GameState nextTurn(GameState state) {
+        if (state == PLAYERS_TURN) {
+            return AI_TURN;
+        }else {
+            return PLAYERS_TURN;
+        }
+    }
 }

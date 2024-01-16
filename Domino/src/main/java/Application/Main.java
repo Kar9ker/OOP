@@ -7,11 +7,11 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-//        MainWindow mainWindow = new MainWindow();
-        someTest();
+        MainWindow mainWindow = new MainWindow();
+//        someTest();
     }
     private static void someTest() {
-        Game game = new Game();
+        Game game = new Game(200, 200);
         game.start();
     }
 }
