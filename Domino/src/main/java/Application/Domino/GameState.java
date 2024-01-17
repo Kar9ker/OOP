@@ -4,8 +4,9 @@ public enum GameState {
     PLAYERS_TURN,
     AI_TURN,
     NOT_STARTED,
-    PLAYING,
-    PAUSE,
+    PLAYER_WINS,
+    AI_WINS,
+    NOBODY,
     FINISHED;
     public static GameState nextTurn(GameState state) {
         if (state == PLAYERS_TURN) {

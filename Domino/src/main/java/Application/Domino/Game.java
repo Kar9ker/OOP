@@ -21,6 +21,7 @@ public class Game {
     private Direction AILocation;
     private Dice lastLeftDice;
     private Dice lastRightDice;
+    private Winner winner;
 
     public Game(int SCREEN_HEIGHT, int SCREEN_WIDTH) {
         this.SCREEN_HEIGHT = SCREEN_HEIGHT;
@@ -68,13 +69,14 @@ public class Game {
 
     public void makeTurn() {
         if (isRoundOver()) {
-            System.out.println("Раунд тю - тю");
+            System.out.println("Раунд окончен");
+            state = GameState.FINISHED;
+            winner = scoringPoints();
             return;
         }
         switch (state) {
             case PLAYERS_TURN -> {
                 Dice chosenDice = playersHand.get(chosenDiceIndex);
-
                 //Если первый ход
                 if (leftValue > 6) {
                     if (chosenDice.isV1sameAsV2()) {
@@ -173,6 +175,11 @@ public class Game {
                 makeTurn();
             }
             case AI_TURN -> {
+                if (getIndexForAI() < 0) {
+
+                    state = GameState.nextTurn(GameState.AI_TURN);
+                    return;
+                }
                 int AIndex = getIndexForAI();
                 Dice chosenDice = AIHand.get(AIndex);
 
@@ -203,6 +210,10 @@ public class Game {
                                 } else if (chosenDice.getSecondValue() == leftValue) {
                                     chosenDice.setDirection(Direction.LEFT);
                                     leftValue = chosenDice.getFirstValue();
+                                } else {
+                                    AILocation = Direction.leftOrRight(AILocation);
+                                    makeTurn();
+                                    return;
                                 }
                                 chosenDice.setX(lastLeftDice.getX() - 2 * Dice.getSMALL_RECT_DIAMETER() - 5);
                                 chosenDice.setY(lastLeftDice.getY() + Dice.getSMALL_RECT_DIAMETER() / 2);
@@ -273,10 +284,53 @@ public class Game {
                 }
                 //Конец хода
                 AIHand.remove(AIndex);
+                if (!isTurnPossible(playersHand)) {
+                    state = GameState.nextTurn(GameState.PLAYERS_TURN);
+                    makeTurn();
+                    return;
+                }
                 state = GameState.nextTurn(GameState.AI_TURN);
             }
         }
     }
+
+    private Winner scoringPoints() {
+        int playerSum = 0;
+        int AISum = 0;
+        if (playersHand.isEmpty()) {
+            for (Dice dice : AIHand) {
+                if (dice.getFirstValue() == 0 && dice.getSecondValue() == 0) {
+                    AISum += 25;
+                }
+                AISum += dice.getFirstValue() + dice.getSecondValue();
+            }
+            return new Winner(AISum, GameState.PLAYER_WINS);
+        } else {
+            for (Dice dice : playersHand) {
+                if (dice.getFirstValue() == 0 && dice.getSecondValue() == 0) {
+                    playerSum += 25;
+                }
+                playerSum += dice.getFirstValue() + dice.getSecondValue();
+            }
+            if (AIHand.isEmpty()) {
+                return new Winner(playerSum, GameState.AI_WINS);
+            } else {
+                for (Dice dice : AIHand) {
+                    if (dice.getFirstValue() == 0 && dice.getSecondValue() == 0) {
+                        AISum += 25;
+                    }
+                    AISum += dice.getFirstValue() + dice.getSecondValue();
+                }
+                if (playerSum > AISum) {
+                    return new Winner(playerSum, GameState.AI_WINS);
+                } else if (AISum > playerSum) {
+                    return new Winner(AISum, GameState.PLAYER_WINS);
+                }
+            }
+        }
+        return new Winner(0, GameState.NOBODY);
+    }
+
     private int getIndexForAI() {
         List<Integer> listOfAvailableIndexes = new ArrayList<>();
         int i = 0;
@@ -286,7 +340,7 @@ public class Game {
             if (leftValue > 6) {
                 dice.setAvailable(true);
                 listOfAvailableIndexes.add(i);
-            }else {
+            } else {
                 dice.setAvailable(firstValue == leftValue || firstValue == rightValue
                         || secondValue == leftValue || secondValue == rightValue);
                 if (dice.isAvailable()) {
@@ -302,12 +356,13 @@ public class Game {
         }
         return -1;
     }
+
     private Direction getAILocation() {
         Random random = new Random();
         int rand = random.nextInt(2);
         if (rand > 0) {
             return Direction.LEFT;
-        }else {
+        } else {
             return Direction.RIGHT;
         }
     }
@@ -510,5 +565,9 @@ public class Game {
 
     public int getRightValue() {
         return rightValue;
+    }
+
+    public Winner getWinner() {
+        return winner;
     }
 }

@@ -78,6 +78,9 @@ public class DrawPanel extends JPanel {
     @Override
     public void paint(final Graphics gr) {
         super.paint(gr);
+        if (game.getState() == GameState.FINISHED) {
+            System.out.println(game.getWinner().toString());
+        }
         gr.setColor(Color.WHITE);
         gr.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
         if (table != null) {
