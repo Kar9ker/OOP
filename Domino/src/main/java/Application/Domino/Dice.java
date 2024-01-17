@@ -10,6 +10,8 @@ public class Dice extends JComponent implements Comparable<Dice>{
     private int x, y;
     Rect firstRect, secondRect;
     private Direction direction;
+    private boolean isAvailable;
+    private boolean isChosen;
 
     @Override //Compare by sum
     public int compareTo(Dice o) {
@@ -149,6 +151,8 @@ public class Dice extends JComponent implements Comparable<Dice>{
         this.direction = direction;
         firstRect = new Rect(0, 0, SMALL_RECT_DIAMETER, firstValue, true);
         secondRect = new Rect(0, 0, SMALL_RECT_DIAMETER, secondValue, true);
+        isAvailable = false;
+        isChosen = false;
     }
 
 
@@ -252,5 +256,21 @@ public class Dice extends JComponent implements Comparable<Dice>{
     }
     public boolean isV1sameAsV2() {
         return firstValue == secondValue;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    public boolean isChosen() {
+        return isChosen;
+    }
+
+    public void setChosen(boolean chosen) {
+        isChosen = chosen;
     }
 }

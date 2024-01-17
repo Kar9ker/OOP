@@ -3,6 +3,7 @@ package Application.Window;
 import Application.Domino.Direction;
 import Application.Domino.Dice;
 import Application.Domino.Game;
+import Application.Domino.GameState;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,11 +18,12 @@ public class DrawPanel extends JPanel {
     private List<Dice> diceList;
     private List<Dice> playersHand;
     private List<Dice> table;
+    private Game game;
 
     public DrawPanel(final int width, final int height) {
         this.PANEL_WIDTH = width;
         this.PANEL_HEIGHT = height;
-        Game game = new Game(PANEL_HEIGHT, PANEL_WIDTH);
+        game = new Game(PANEL_HEIGHT, PANEL_WIDTH);
         game.start();
         diceList = game.getDiceList();
         playersHand = game.getPlayersHand();
@@ -33,19 +35,23 @@ public class DrawPanel extends JPanel {
                     case 1 :
                         int i = 0;
                         for (Dice dice : playersHand) {
+                            dice.setChosen(false);
+                        }
+                        for (Dice dice : playersHand) {
                             int x = dice.getX();
                             int y = dice.getY();
                             int width = Dice.getSMALL_RECT_DIAMETER();
                             int height = Dice.getSMALL_RECT_DIAMETER() * 2;
                             int mouseX = e.getX();
                             int mouseY = e.getY();
-                            if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
+                            if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height && dice.isAvailable()) {
                                 game.setChosenDiceIndex(i);
+                                dice.setChosen(true);
                                 System.out.println("click");
-                                break;
                             }
                             i++;
                         }
+                        repaint();
                         break;
                     case 3 :
                         if (game.getChosenDiceIndex() >= 0) {
@@ -79,8 +85,36 @@ public class DrawPanel extends JPanel {
         }
         if (playersHand != null) {
             orderPlayersDices();
-            for (Dice dice : playersHand) {
-                dice.draw(gr);
+            if (game.getState() == GameState.PLAYERS_TURN) {
+                for (Dice dice : playersHand) {
+                    int firstValue = dice.getFirstValue();
+                    int secondValue = dice.getSecondValue();
+                    int leftValue = game.getLeftValue();
+                    int rightValue = game.getRightValue();
+                    if (game.getLeftValue() > 6) {
+                        dice.setAvailable(true);
+                    }else {
+                        dice.setAvailable(firstValue == leftValue || firstValue == rightValue
+                                || secondValue == leftValue || secondValue == rightValue);
+                    }
+                    dice.draw(gr);
+                    if (!dice.isAvailable()) {
+                        gr.setColor(Color.RED);
+                        gr.drawLine(dice.getX(), dice.getY(),
+                                dice.getX() + Dice.getSMALL_RECT_DIAMETER(), dice.getY() + 2 * Dice.getSMALL_RECT_DIAMETER());
+                    }
+                    if (dice.isChosen()) {
+                        gr.setColor(Color.GREEN);
+                        gr.drawRect(dice.getX(), dice.getY(),
+                                Dice.getSMALL_RECT_DIAMETER(), Dice.getSMALL_RECT_DIAMETER() * 2);
+                    }
+                }
+            }else {
+                for (Dice dice : playersHand) {
+                    dice.setAvailable(false);
+                    dice.setChosen(false);
+                    dice.draw(gr);
+                }
             }
         }
     }

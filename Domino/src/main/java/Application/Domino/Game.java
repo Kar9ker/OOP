@@ -94,6 +94,7 @@ public class Game {
                     switch (locationOfChosenDice) {
                         case LEFT -> {
                             if (lastLeftDice.isV1sameAsV2()) {
+                                //Нужен выбор
                                 chosenDice.setDirection(Direction.LEFT);
                                 chosenDice.setX(lastLeftDice.getX() - 2 * Dice.getSMALL_RECT_DIAMETER() - 5);
                                 chosenDice.setY(lastLeftDice.getY() + Dice.getSMALL_RECT_DIAMETER() / 2);
@@ -103,6 +104,7 @@ public class Game {
                                     chosenDice.setX(lastLeftDice.getX() - Dice.getSMALL_RECT_DIAMETER() - 5);
                                     chosenDice.setY(lastLeftDice.getY() - Dice.getSMALL_RECT_DIAMETER() / 2);
                                 } else {
+                                    //Нужен выбор
                                     chosenDice.setDirection(Direction.LEFT);
                                     chosenDice.setX(lastLeftDice.getX() - 2 * Dice.getSMALL_RECT_DIAMETER() - 5);
                                     chosenDice.setY(lastLeftDice.getY());
@@ -110,11 +112,29 @@ public class Game {
                             }
                             table.add(chosenDice);
                             leftValue = chosenDice.getFirstValue();
-                            rightValue = chosenDice.getSecondValue();
                             lastLeftDice = Dice.copyOf(chosenDice);
                         }
                         case RIGHT -> {
-                            System.out.println("Right");
+                            if (lastRightDice.isV1sameAsV2()) {
+                                //Нужен выбор
+                                chosenDice.setDirection(Direction.LEFT);
+                                chosenDice.setX(lastRightDice.getX() + Dice.getSMALL_RECT_DIAMETER() + 5);
+                                chosenDice.setY(lastRightDice.getY() + Dice.getSMALL_RECT_DIAMETER() / 2);
+                            } else {
+                                if (chosenDice.isV1sameAsV2()) {
+                                    chosenDice.setDirection(Direction.UP);
+                                    chosenDice.setX(lastRightDice.getX() + 2 * Dice.getSMALL_RECT_DIAMETER() + 5);
+                                    chosenDice.setY(lastRightDice.getY() - Dice.getSMALL_RECT_DIAMETER() / 2);
+                                } else {
+                                    //Нужен выбор
+                                    chosenDice.setDirection(Direction.LEFT);
+                                    chosenDice.setX(lastRightDice.getX() + 2 * Dice.getSMALL_RECT_DIAMETER() + 5);
+                                    chosenDice.setY(lastRightDice.getY());
+                                }
+                            }
+                            table.add(chosenDice);
+                            rightValue = chosenDice.getSecondValue();
+                            lastRightDice = Dice.copyOf(chosenDice);
                         }
                     }
                 }
@@ -315,5 +335,17 @@ public class Game {
 
     public List<Dice> getAIHand() {
         return AIHand;
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public int getLeftValue() {
+        return leftValue;
+    }
+
+    public int getRightValue() {
+        return rightValue;
     }
 }
