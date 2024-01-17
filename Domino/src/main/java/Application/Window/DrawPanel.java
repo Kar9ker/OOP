@@ -14,34 +14,51 @@ import java.util.Random;
 public class DrawPanel extends JPanel {
     private final int PANEL_WIDTH;
     private final int PANEL_HEIGHT;
-    private final int TIMER_DELAY;
-    private Timer timer;
-    private int ticksFromStart = 0;
     private List<Dice> diceList;
     private List<Dice> playersHand;
     private List<Dice> table;
 
-    public DrawPanel(final int width, final int height, final int timerDelay) {
+    public DrawPanel(final int width, final int height) {
         this.PANEL_WIDTH = width;
         this.PANEL_HEIGHT = height;
-        this.TIMER_DELAY = timerDelay;
         Game game = new Game(PANEL_HEIGHT, PANEL_WIDTH);
-        //общая колода
+        game.start();
         diceList = game.getDiceList();
-        //начальная раздача
         playersHand = game.getPlayersHand();
         table = game.getTable();
-        game.start();
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 switch (e.getButton()) {
                     case 1 :
-
-                        repaint();
+                        int i = 0;
+                        for (Dice dice : playersHand) {
+                            int x = dice.getX();
+                            int y = dice.getY();
+                            int width = Dice.getSMALL_RECT_DIAMETER();
+                            int height = Dice.getSMALL_RECT_DIAMETER() * 2;
+                            int mouseX = e.getX();
+                            int mouseY = e.getY();
+                            if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
+                                game.setChosenDiceIndex(i);
+                                System.out.println("click");
+                                break;
+                            }
+                            i++;
+                        }
                         break;
                     case 3 :
-
+                        if (game.getChosenDiceIndex() >= 0) {
+                            int mouseX = e.getX();
+                            if (mouseX > PANEL_WIDTH / 2) {
+                                game.setLocationOfChosenDice(Direction.RIGHT);
+                            }else {
+                                game.setLocationOfChosenDice(Direction.LEFT);
+                            }
+                            game.makeTurn();
+                        }
+                        playersHand = game.getPlayersHand();
+                        table = game.getTable();
                         repaint();
                         break;
                 }
@@ -55,12 +72,16 @@ public class DrawPanel extends JPanel {
         super.paint(gr);
         gr.setColor(Color.WHITE);
         gr.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
-        for (Dice d : table) {
-            d.draw(gr);
+        if (table != null) {
+            for (Dice d : table) {
+                d.draw(gr);
+            }
         }
-        orderPlayersDices();
-        for (Dice dice : playersHand) {
-            dice.draw(gr);
+        if (playersHand != null) {
+            orderPlayersDices();
+            for (Dice dice : playersHand) {
+                dice.draw(gr);
+            }
         }
     }
 

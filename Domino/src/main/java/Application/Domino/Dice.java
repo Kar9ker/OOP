@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Dice extends JComponent implements Comparable<Dice>{
-    private final static int SMALL_RECT_DIAMETER = 50;
+    private final static int SMALL_RECT_DIAMETER = 40;
     private int firstValue;
     private int secondValue;
     private int x, y;
