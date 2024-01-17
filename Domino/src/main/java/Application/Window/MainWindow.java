@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class MainWindow extends JFrame {
     private final DrawPanel panel;
-    private final int BACKGROUND_WIDTH = 1000;
+    private final int BACKGROUND_WIDTH = 1600;
     private final int BACKGROUND_HEIGHT = 800;
 
     public MainWindow() throws HeadlessException {

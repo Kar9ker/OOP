@@ -15,7 +15,7 @@ import java.util.Random;
 public class DrawPanel extends JPanel {
     private final int PANEL_WIDTH;
     private final int PANEL_HEIGHT;
-    private List<Dice> diceList;
+    private List<Dice> AIHand;
     private List<Dice> playersHand;
     private List<Dice> table;
     private Game game;
@@ -25,9 +25,12 @@ public class DrawPanel extends JPanel {
         this.PANEL_HEIGHT = height;
         game = new Game(PANEL_HEIGHT, PANEL_WIDTH);
         game.start();
-        diceList = game.getDiceList();
+        AIHand = game.getAIHand();
         playersHand = game.getPlayersHand();
         table = game.getTable();
+        if (game.getState() == GameState.AI_TURN) {
+            game.makeTurn();
+        }
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -70,7 +73,6 @@ public class DrawPanel extends JPanel {
                 }
             }
         });
-
     }
 
     @Override
@@ -81,6 +83,16 @@ public class DrawPanel extends JPanel {
         if (table != null) {
             for (Dice d : table) {
                 d.draw(gr);
+            }
+        }
+        if (AIHand != null) {
+            int coefficient = PANEL_WIDTH - 60;
+            for (Dice dice : AIHand) {
+                dice.setDirection(Direction.UP);
+                dice.setX(coefficient);
+                dice.setY(10);
+                coefficient -= Dice.getSMALL_RECT_DIAMETER() + 10;
+                dice.draw(gr);
             }
         }
         if (playersHand != null) {

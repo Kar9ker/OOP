@@ -18,6 +18,7 @@ public class Game {
     private int rightValue;
     private int chosenDiceIndex; //For player
     private Direction locationOfChosenDice; // Добавить кость слева или справа
+    private Direction AILocation;
     private Dice lastLeftDice;
     private Dice lastRightDice;
 
@@ -29,18 +30,18 @@ public class Game {
 
     private void fillSomeDiceList() {
         playersHand = new ArrayList<>();
+        playersHand.add(new Dice(3, 3, 0, 0, Direction.UP));
         playersHand.add(new Dice(3, 6, 0, 0, Direction.UP));
-        playersHand.add(new Dice(4, 5, 0, 0, Direction.UP));
         playersHand.add(new Dice(1, 3, 0, 0, Direction.UP));
         playersHand.add(new Dice(2, 2, 0, 0, Direction.UP));
         playersHand.add(new Dice(2, 5, 0, 0, Direction.UP));
 
-        AIHand = new ArrayList<>();
-        AIHand.add(new Dice(2, 4, 0, 0, Direction.UP));
-        AIHand.add(new Dice(4, 4, 0, 0, Direction.UP));
-        AIHand.add(new Dice(3, 5, 0, 0, Direction.UP));
-        AIHand.add(new Dice(0, 2, 0, 0, Direction.UP));
-        AIHand.add(new Dice(0, 5, 0, 0, Direction.UP));
+//        AIHand = new ArrayList<>();
+//        AIHand.add(new Dice(2, 4, 0, 0, Direction.UP));
+//        AIHand.add(new Dice(4, 4, 0, 0, Direction.UP));
+//        AIHand.add(new Dice(3, 5, 0, 0, Direction.UP));
+//        AIHand.add(new Dice(0, 2, 0, 0, Direction.UP));
+//        AIHand.add(new Dice(0, 5, 0, 0, Direction.UP));
     }
 
     public void start() {
@@ -52,13 +53,14 @@ public class Game {
             diceList = getFilledDices();
             playersHand = getRandDices(diceList, STARTER_COUNT_OF_DICES);
             AIHand = getRandDices(diceList, STARTER_COUNT_OF_DICES);
+            AILocation = Direction.LEFT;
             table = new ArrayList<>();
             lastLeftDice = new Dice(0, 0, 0, 0, Direction.UP);
             lastRightDice = new Dice(0, 0, 0, 0, Direction.UP);
             chosenDiceIndex = -1;
             // Определение первого хода
-//            state = getFirstTurn();
-            state = GameState.PLAYERS_TURN;
+            state = getFirstTurn();
+//            state = GameState.PLAYERS_TURN;
             //Ход раунда
             round++;
         }
@@ -72,7 +74,7 @@ public class Game {
         switch (state) {
             case PLAYERS_TURN -> {
                 Dice chosenDice = playersHand.get(chosenDiceIndex);
-                playersHand.remove(chosenDiceIndex);
+
                 //Если первый ход
                 if (leftValue > 6) {
                     if (chosenDice.isV1sameAsV2()) {
@@ -94,58 +96,219 @@ public class Game {
                     switch (locationOfChosenDice) {
                         case LEFT -> {
                             if (lastLeftDice.isV1sameAsV2()) {
-                                //Нужен выбор
-                                chosenDice.setDirection(Direction.LEFT);
+                                if (chosenDice.getFirstValue() == leftValue) {
+                                    chosenDice.setDirection(Direction.RIGHT);
+                                    leftValue = chosenDice.getSecondValue();
+                                } else if (chosenDice.getSecondValue() == leftValue) {
+                                    chosenDice.setDirection(Direction.LEFT);
+                                    leftValue = chosenDice.getFirstValue();
+                                }
                                 chosenDice.setX(lastLeftDice.getX() - 2 * Dice.getSMALL_RECT_DIAMETER() - 5);
                                 chosenDice.setY(lastLeftDice.getY() + Dice.getSMALL_RECT_DIAMETER() / 2);
                             } else {
+                                if (chosenDice.getFirstValue() != leftValue && chosenDice.getSecondValue() != leftValue) {
+                                    return;
+                                }
                                 if (chosenDice.isV1sameAsV2()) {
                                     chosenDice.setDirection(Direction.UP);
                                     chosenDice.setX(lastLeftDice.getX() - Dice.getSMALL_RECT_DIAMETER() - 5);
                                     chosenDice.setY(lastLeftDice.getY() - Dice.getSMALL_RECT_DIAMETER() / 2);
+                                    leftValue = chosenDice.getFirstValue();
                                 } else {
-                                    //Нужен выбор
-                                    chosenDice.setDirection(Direction.LEFT);
+                                    if (chosenDice.getFirstValue() == leftValue) {
+                                        chosenDice.setDirection(Direction.RIGHT);
+                                        leftValue = chosenDice.getSecondValue();
+                                    } else if (chosenDice.getSecondValue() == leftValue) {
+                                        chosenDice.setDirection(Direction.LEFT);
+                                        leftValue = chosenDice.getFirstValue();
+                                    }
                                     chosenDice.setX(lastLeftDice.getX() - 2 * Dice.getSMALL_RECT_DIAMETER() - 5);
                                     chosenDice.setY(lastLeftDice.getY());
                                 }
                             }
                             table.add(chosenDice);
-                            leftValue = chosenDice.getFirstValue();
                             lastLeftDice = Dice.copyOf(chosenDice);
                         }
                         case RIGHT -> {
                             if (lastRightDice.isV1sameAsV2()) {
-                                //Нужен выбор
-                                chosenDice.setDirection(Direction.LEFT);
+                                if (chosenDice.getFirstValue() == rightValue) {
+                                    chosenDice.setDirection(Direction.LEFT);
+                                    rightValue = chosenDice.getSecondValue();
+                                } else if (chosenDice.getSecondValue() == rightValue) {
+                                    chosenDice.setDirection(Direction.RIGHT);
+                                    rightValue = chosenDice.getFirstValue();
+                                }
                                 chosenDice.setX(lastRightDice.getX() + Dice.getSMALL_RECT_DIAMETER() + 5);
                                 chosenDice.setY(lastRightDice.getY() + Dice.getSMALL_RECT_DIAMETER() / 2);
                             } else {
+                                if (chosenDice.getFirstValue() != rightValue && chosenDice.getSecondValue() != rightValue) {
+                                    return;
+                                }
                                 if (chosenDice.isV1sameAsV2()) {
                                     chosenDice.setDirection(Direction.UP);
                                     chosenDice.setX(lastRightDice.getX() + 2 * Dice.getSMALL_RECT_DIAMETER() + 5);
                                     chosenDice.setY(lastRightDice.getY() - Dice.getSMALL_RECT_DIAMETER() / 2);
+                                    rightValue = chosenDice.getFirstValue();
                                 } else {
-                                    //Нужен выбор
-                                    chosenDice.setDirection(Direction.LEFT);
+                                    if (chosenDice.getFirstValue() == rightValue) {
+                                        chosenDice.setDirection(Direction.LEFT);
+                                        rightValue = chosenDice.getSecondValue();
+                                    } else if (chosenDice.getSecondValue() == rightValue) {
+                                        chosenDice.setDirection(Direction.RIGHT);
+                                        rightValue = chosenDice.getFirstValue();
+                                    }
                                     chosenDice.setX(lastRightDice.getX() + 2 * Dice.getSMALL_RECT_DIAMETER() + 5);
                                     chosenDice.setY(lastRightDice.getY());
                                 }
                             }
                             table.add(chosenDice);
-                            rightValue = chosenDice.getSecondValue();
                             lastRightDice = Dice.copyOf(chosenDice);
                         }
                     }
                 }
-
                 //Конец хода
+                playersHand.remove(chosenDiceIndex);
                 chosenDiceIndex = -1;
-//                    state = GameState.nextTurn(GameState.PLAYERS_TURN);
+                state = GameState.nextTurn(GameState.PLAYERS_TURN);
+                makeTurn();
             }
             case AI_TURN -> {
-                System.out.println();
+                int AIndex = getIndexForAI();
+                Dice chosenDice = AIHand.get(AIndex);
+
+                //Если первый ход
+                if (leftValue > 6) {
+                    if (chosenDice.isV1sameAsV2()) {
+                        chosenDice.setX(SCREEN_WIDTH / 2 - Dice.getSMALL_RECT_DIAMETER() / 2);
+                        chosenDice.setY(SCREEN_HEIGHT / 2 - Dice.getSMALL_RECT_DIAMETER());
+                        chosenDice.setDirection(Direction.UP);
+                    } else {
+                        chosenDice.setX(SCREEN_WIDTH / 2 - Dice.getSMALL_RECT_DIAMETER());
+                        chosenDice.setY(SCREEN_HEIGHT / 2 - Dice.getSMALL_RECT_DIAMETER() / 2);
+                        chosenDice.setDirection(Direction.LEFT);
+                    }
+                    lastRightDice = Dice.copyOf(chosenDice);
+                    lastLeftDice = Dice.copyOf(chosenDice);
+                    table.add(chosenDice);
+                    leftValue = chosenDice.getFirstValue();
+                    rightValue = chosenDice.getSecondValue();
+                } else {
+                    //Не первый ход
+                    switch (AILocation) {
+                        case LEFT -> {
+                            if (lastLeftDice.isV1sameAsV2()) {
+                                if (chosenDice.getFirstValue() == leftValue) {
+                                    chosenDice.setDirection(Direction.RIGHT);
+                                    leftValue = chosenDice.getSecondValue();
+                                } else if (chosenDice.getSecondValue() == leftValue) {
+                                    chosenDice.setDirection(Direction.LEFT);
+                                    leftValue = chosenDice.getFirstValue();
+                                }
+                                chosenDice.setX(lastLeftDice.getX() - 2 * Dice.getSMALL_RECT_DIAMETER() - 5);
+                                chosenDice.setY(lastLeftDice.getY() + Dice.getSMALL_RECT_DIAMETER() / 2);
+                            } else {
+                                if (chosenDice.getFirstValue() != leftValue && chosenDice.getSecondValue() != leftValue) {
+                                    AILocation = Direction.leftOrRight(AILocation);
+                                    makeTurn();
+                                    return;
+                                }
+                                if (chosenDice.isV1sameAsV2()) {
+                                    chosenDice.setDirection(Direction.UP);
+                                    chosenDice.setX(lastLeftDice.getX() - Dice.getSMALL_RECT_DIAMETER() - 5);
+                                    chosenDice.setY(lastLeftDice.getY() - Dice.getSMALL_RECT_DIAMETER() / 2);
+                                    leftValue = chosenDice.getFirstValue();
+                                } else {
+                                    if (chosenDice.getFirstValue() == leftValue) {
+                                        chosenDice.setDirection(Direction.RIGHT);
+                                        leftValue = chosenDice.getSecondValue();
+                                    } else if (chosenDice.getSecondValue() == leftValue) {
+                                        chosenDice.setDirection(Direction.LEFT);
+                                        leftValue = chosenDice.getFirstValue();
+                                    }
+                                    chosenDice.setX(lastLeftDice.getX() - 2 * Dice.getSMALL_RECT_DIAMETER() - 5);
+                                    chosenDice.setY(lastLeftDice.getY());
+                                }
+                            }
+                            table.add(chosenDice);
+                            lastLeftDice = Dice.copyOf(chosenDice);
+                        }
+                        case RIGHT -> {
+                            if (lastRightDice.isV1sameAsV2()) {
+                                if (chosenDice.getFirstValue() == rightValue) {
+                                    chosenDice.setDirection(Direction.LEFT);
+                                    rightValue = chosenDice.getSecondValue();
+                                } else if (chosenDice.getSecondValue() == rightValue) {
+                                    chosenDice.setDirection(Direction.RIGHT);
+                                    rightValue = chosenDice.getFirstValue();
+                                }
+                                chosenDice.setX(lastRightDice.getX() + Dice.getSMALL_RECT_DIAMETER() + 5);
+                                chosenDice.setY(lastRightDice.getY() + Dice.getSMALL_RECT_DIAMETER() / 2);
+                            } else {
+                                if (chosenDice.getFirstValue() != rightValue && chosenDice.getSecondValue() != rightValue) {
+                                    AILocation = Direction.leftOrRight(AILocation);
+                                    makeTurn();
+                                    return;
+                                }
+                                if (chosenDice.isV1sameAsV2()) {
+                                    chosenDice.setDirection(Direction.UP);
+                                    chosenDice.setX(lastRightDice.getX() + 2 * Dice.getSMALL_RECT_DIAMETER() + 5);
+                                    chosenDice.setY(lastRightDice.getY() - Dice.getSMALL_RECT_DIAMETER() / 2);
+                                    rightValue = chosenDice.getFirstValue();
+                                } else {
+                                    if (chosenDice.getFirstValue() == rightValue) {
+                                        chosenDice.setDirection(Direction.LEFT);
+                                        rightValue = chosenDice.getSecondValue();
+                                    } else if (chosenDice.getSecondValue() == rightValue) {
+                                        chosenDice.setDirection(Direction.RIGHT);
+                                        rightValue = chosenDice.getFirstValue();
+                                    }
+                                    chosenDice.setX(lastRightDice.getX() + 2 * Dice.getSMALL_RECT_DIAMETER() + 5);
+                                    chosenDice.setY(lastRightDice.getY());
+                                }
+                            }
+                            table.add(chosenDice);
+                            lastRightDice = Dice.copyOf(chosenDice);
+                        }
+                    }
+                }
+                //Конец хода
+                AIHand.remove(AIndex);
+                state = GameState.nextTurn(GameState.AI_TURN);
             }
+        }
+    }
+    private int getIndexForAI() {
+        List<Integer> listOfAvailableIndexes = new ArrayList<>();
+        int i = 0;
+        for (Dice dice : AIHand) {
+            int firstValue = dice.getFirstValue();
+            int secondValue = dice.getSecondValue();
+            if (leftValue > 6) {
+                dice.setAvailable(true);
+                listOfAvailableIndexes.add(i);
+            }else {
+                dice.setAvailable(firstValue == leftValue || firstValue == rightValue
+                        || secondValue == leftValue || secondValue == rightValue);
+                if (dice.isAvailable()) {
+                    listOfAvailableIndexes.add(i);
+                }
+            }
+            i++;
+        }
+        int size = listOfAvailableIndexes.size();
+        if (size > 0) {
+            Random random = new Random();
+            return listOfAvailableIndexes.get(random.nextInt(size));
+        }
+        return -1;
+    }
+    private Direction getAILocation() {
+        Random random = new Random();
+        int rand = random.nextInt(2);
+        if (rand > 0) {
+            return Direction.LEFT;
+        }else {
+            return Direction.RIGHT;
         }
     }
 

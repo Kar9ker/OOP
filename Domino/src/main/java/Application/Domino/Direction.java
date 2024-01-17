@@ -13,4 +13,11 @@ public enum Direction {
             case LEFT -> UP;
         };
     }
+    public static Direction leftOrRight(Direction direction) {
+        if (direction == RIGHT) {
+            return LEFT;
+        }else {
+            return RIGHT;
+        }
+    }
 }
